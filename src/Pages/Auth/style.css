@@ -1,0 +1,121 @@
+/* Container */
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #f3f3f3; /* same off-white as chat */
+  font-family: 'Georgia', serif;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Subtle grid overlay (like chat) */
+.container::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: repeating-linear-gradient(
+      0deg,
+      #f3f3f3 0 12.5%,
+      #d3d3d3 12.5% 25%
+    ),
+    repeating-linear-gradient(
+      90deg,
+      #f3f3f3 0 12.5%,
+      #d3d3d3 12.5% 25%
+    );
+  opacity: 0.08; /* subtle */
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Login Box */
+.box {
+  background: rgba(255, 255, 255, 0.95);
+  padding: 50px 40px;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 450px;
+  border: 3px solid #333;
+  box-shadow: inset 0 0 12px rgba(0,0,0,0.2),
+              4px 4px 15px rgba(0,0,0,0.2);
+  z-index: 1;
+}
+
+/* Title */
+.title {
+  font-size: 2rem;
+  margin-bottom: 28px;
+  font-weight: bold;
+  text-align: center;
+  color: #333;
+}
+
+/* Inputs */
+input {
+  width: 90%;
+  padding: 14px 18px;
+  margin: 12px 0;
+  border: 2px solid #333;
+  border-radius: 30px;
+  font-size: 16px;
+  outline: none;
+  background-color: #fff;
+  transition: all 0.2s;
+}
+
+input:focus {
+  border-color: #555;
+  box-shadow: 0 0 10px rgba(85,85,85,0.5);
+}
+
+/* Options row (remember me + forgot password) */
+.options {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 14px 0;
+  font-size: 15px;
+  color: #333;
+}
+
+.forgot-password {
+  color: #555;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+/* Buttons */
+button {
+  width: 100%;
+  padding: 14px 20px;
+  border: none;
+  border-radius: 30px;
+  background-color: #333;
+  color: #fff;
+  font-weight: bold;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.3s, transform 0.2s;
+}
+
+button:hover {
+  background-color: #555;
+  transform: translateY(-2px);
+}
+
+/* Switch between login/signup */
+.switch {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 15px;
+  color: #333;
+}
+
+.toggle {
+  font-weight: bold;
+  cursor: pointer;
+  color: #000;
+  text-decoration: underline;
+}
