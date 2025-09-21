@@ -1,0 +1,84 @@
+.button-container {
+  text-align: center;
+ 
+ 
+}
+
+.button-container > * {
+  display: inline-block;
+}
+
+.borderPrimaryButton{
+    align-items: center;
+}
+
+.primary-button {
+  width: 90%;
+  padding: 0.75rem;
+  background-color: #9D6FF2;
+  color: white;
+  border: none;
+  border-radius: 1%;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.primary-button:hover {
+  background-color: #1e40af;
+}
+.create-btn {
+  background-color: #ff7f7f;
+  color: white;
+  padding: 20px 14px 50px 14px;
+  width: 15.125rem;
+  height: 1.8125rem;
+  font-size: 1.5rem;
+  border: none;
+  border-radius: 100px;
+  cursor: pointer;
+}
+
+.explore-btn {
+  background-color: transparent;
+  color: black;
+  border: 2px solid #000000;
+  padding: 19px 14px 19px 14px;
+  font-size: 1.5rem;
+  border-radius: 100px;
+  cursor: pointer;
+  margin-left: 2px;
+}
+
+.settings-btn{
+  width: 150px;
+  background-color: #9D6FF2;
+  color: white;
+  border: none;
+  border-radius: 20%;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  height: 50px;
+  
+}
+.settings-btn:hover{
+  background-color: #1e40af;
+}
+.settingsBlock{
+  display: block;
+}
+
+.capsule-view-button {
+  background-color: rgba(135, 206, 235, 0.65);
+  width: 50%;
+  color: black;
+  border: 1px solid black;
+  padding: 6px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: 0.2s;
+}
+
+.capsule-view-button:hover {
+  background-color: #9D6FF2;
+}
