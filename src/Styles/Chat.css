@@ -1,4 +1,4 @@
-/* Full screen chat container with subtle chessboard */
+
 .chat-container {
   position: fixed;
   top: 0;
@@ -13,7 +13,7 @@
   overflow: hidden;
 }
 
-/* Chessboard overlay using subtle squares */
+
 .chat-container::before {
   content: "";
   position: absolute;
