@@ -13,7 +13,7 @@ import Chat from "./Pages/Chat";
 import Navbar from "./Components/Shared/Navbar";
 
 
-import ProtectedRoute from "./ProtectedRoutes";
+import ProtectedRoutes from "./ProtectedRoutes";
 
 function App() {
   const [user, setUser] = useState(null); // Global user state
