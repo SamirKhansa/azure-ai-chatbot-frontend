@@ -10,6 +10,9 @@ const AdminPage = ({ user }) => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [resource, setResource] = useState("");
   const [docName, setDocName] = useState("");
+  const [attributes, setAttrbutes]=useState({
+      email: "",
+    });
   
 
   useEffect(() => {
@@ -26,6 +29,24 @@ const AdminPage = ({ user }) => {
     setDocName("");
     setResource("");
   };
+  const changeUserRole = (email, newRole) => {
+    setUsers(prevUsers =>
+      prevUsers.map(user =>
+        user.email === email ? { ...user, role: newRole } : user
+      )
+    );
+  };
+  const onDeleteSuccess = (docToDelete) => {
+  setDocuments(prevDocs =>
+    prevDocs.filter(doc =>
+      !(
+        doc.documents === docToDelete.documents &&
+        doc.Resource === docToDelete.Resource 
+        
+      )
+    )
+  );
+};
 
   return (
     <div className="admin-container">
@@ -57,19 +78,21 @@ const AdminPage = ({ user }) => {
                     <FileButton 
                     text="Promote"
                     Purpose="Promote"
-                    email={u.email}
+                    attribute={{ email: u.email}}
                     ClassNames="promote-btn"
+                    onSuccess={changeUserRole}
                     />
                     <FileButton 
                     text="Denote"
                     Purpose="Denote"
-                    email={u.email}
+                    attribute={{ email: u.email }}
                     ClassNames="demote-btn"
+                    onSuccess={changeUserRole}
                     />
                     <FileButton 
                     text="Delete"
                     Purpose="Delete"
-                    email={u.email}
+                    attribute={{ email: u.email }}
                     ClassNames="delete-btn"
                     />
                     
@@ -128,18 +151,32 @@ const AdminPage = ({ user }) => {
             <tbody>
               {documents.map((doc, index) => (
                 <tr key={index}>
-                  <td>{doc.Name}</td>
+                  <td>{doc.documents}</td>
                   <td>{doc.Type}</td>
-                  <td>{doc.resource}</td>
+                  <td>{doc.Resource}</td>
                   <td>{doc.UploadedBy}</td>
                   <td>
-                    <button className="view-btn">View</button>
+                    <FileButton
+                    Purpose={"View"}
+                    ClassNames={"view-btn"}
+                    text={"View"}
+                    attribute={{
+                      DocumentName: doc.documents,
+                      Resource: doc.Resource
+                    }}
+                    />
+                    
                     <FileButton 
                       Purpose="DeleteDocument"
                       text="Delete" 
                       file={selectedFile}
                       type={selectedFile?.type} 
-                      resource={doc.resource} 
+                      attribute={{
+                        resource:doc.Resource,
+                        DocumentName: doc.documents
+                      }}
+                      onSuccess={onDeleteSuccess}
+                      
                       ClassNames="delete-btn"
                     />
                   </td>
