@@ -1,5 +1,6 @@
 import axios from "axios";
 
+
 export const handleUpload = async (file, docName, type, resource, UploadedBy) => {
   try {
     const formData = new FormData();
@@ -19,9 +20,9 @@ export const handleUpload = async (file, docName, type, resource, UploadedBy) =>
 
     // Return the new document to update AdminPage state
     return {
-      name: docName,
-      type: type,
-      resource: resource,
+      documents: docName,
+      Type: type,
+      Resource: resource,
       UploadedBy: UploadedBy
     };
 
@@ -31,3 +32,29 @@ export const handleUpload = async (file, docName, type, resource, UploadedBy) =>
     throw error;
   }
 };
+
+// src/services/documentService.js
+
+
+export const RetreivingContentOfDocument= async(name, resource, navigate) =>{
+  try {
+    
+    
+    const response = await axios.post(
+      "http://localhost:7071/api/ChatbotFunction/ViewDocument",
+
+      {
+        "name":name,
+        "resource":resource
+      },
+      { headers: { "Content-Type": "application/json" } }
+    );
+
+    console.log(response.data);
+    
+    return response.data;
+  } catch (error) {
+    console.error("Error in from retreiving the content from documents:", error);
+    throw error;
+  }
+}
