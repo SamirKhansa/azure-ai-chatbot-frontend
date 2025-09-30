@@ -1,92 +1,99 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import "../Styles/Chat.css";
 import Loader from "../Components/Shared/Loader";
-import { sendMessageToBackend } from "../Services/Chat";
-import MicButton from "../Components/Shared/MicButton";
+import { handleSend } from "../Services/Chat";
+import Input from "../Components/Shared/Input";
+
+import FileButton from "../Components/Shared/Button/FileButton";
 
 const Chat = () => {
+  const [isRecording, setIsRecording] = useState(false);
   const [messages, setMessages] = useState([
     { role: "ai", text: "Hello! I am your chess instructor 🤖♟️. How can I help?" }
   ]);
-  const [input, setInput] = useState("");
+  const [Inputs, setInput] = useState("");
   const [loading, setLoading] = useState(false);
-  const [sessionId, setSessionId] = useState(null);
-  const [latestAudio, setLatestAudio] = useState(null); // store latest audio blob URL
+  const [latestAudio, setLatestAudio] = useState(null);
+  const handleKeyDown = (e) => {
+      if (e.key === "Enter" && Inputs!=="") handleSend(Inputs, setMessages,setInput, setLoading);
+    };
+  const audioContextRef = useRef(null);
+  const recorderRef = useRef(null);
 
-  const sendMessage = async () => {
-    if (!input.trim()) return;
-
-    setMessages([...messages, { role: "user", text: input }]);
-    setInput("");
-    setLoading(true);
-
-    try {
-      const response = await sendMessageToBackend(input);
-      setMessages(prev => [...prev, { role: "ai", text: response }]);
-
-      if (response.sessionId && !sessionId) {
-        setSessionId(response.sessionId);
-        localStorage.setItem("sessionId", response.sessionId);
-      }
-    } catch (error) {
-      setMessages(prev => [...prev, { role: "ai", text: "Something went wrong 😅" }]);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // function for audio messages
-  const sendAudio = async (base64data, audioBlobUrl) => {
-    setMessages(prev => [...prev, { role: "user", text: "🎤 (voice message)" }]);
-    setLatestAudio(audioBlobUrl); // save the blob URL of the latest audio
-    setLoading(true);
-
-    try {
-      const response = await sendMessageToBackend(null, base64data);
-      setMessages(prev => [...prev, { role: "ai", text: response }]);
-    } catch (error) {
-      setMessages(prev => [
-        ...prev,
-        { role: "ai", text: "Something went wrong with audio 😅" }
-      ]);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const playLatestAudio = () => {
-    if (latestAudio) {
-      const audio = new Audio(latestAudio);
-      audio.play();
-    }
-  };
-
+  const onUploadSuccess = () => {
+    setMessages([])
+  }
+  
   return (
-    <div className="chat-container">
-      <h2>♟️ Chess Instructor Chat</h2>
+    <div className="chatContainer">
+      <h2 className="chatHeader">♟️ Chess Instructor Chat</h2>
 
-      <div className="chat-window">
+      <div className="chatWindow">
         {messages.map((msg, i) => (
-          <div key={i} className={`message ${msg.role}`}>
-            <strong>{msg.role === "user" ? "You" : "Coach"}:</strong> {msg.text}
+          <div key={i} className={`message ${msg.role === "user" ? "user" : "ai"}`}>
+            <strong>{msg.role === "user" ? "You" : "Coach"}:</strong>
+            
+            {msg.url ? (
+              // Show only the image if URL exists
+              <img src={msg.url} alt="Chess Opening" className="chessImage" />
+            ) : (
+              // Otherwise show text
+              <p>{msg.text}</p>
+            )}
           </div>
         ))}
         {loading && <Loader />}
       </div>
 
-      <div className="input-bar">
-        <input
-          type="text"
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          placeholder="Ask about chess..."
-          onKeyDown={(e) => e.key === "Enter" && sendMessage()}
-        />
-        <button onClick={sendMessage}>Send</button>
-        <MicButton onSendAudio={sendAudio} />
+      <div className="inputBar">
+        <Input 
+        StylingClass={"chatInput"}
+        type={"text"}
+        value={Inputs}
+        onChangeListener={(e) => setInput(e.target.value)}
+        hint={"Ask about chess..."}
+        EnterKey={handleKeyDown}
 
+        
+         />
+        
+        <FileButton Purpose={"SendMessage"}
+                     text="Send"
+                     ClassNames={"chatSendButton"}
+                     attribute={{
+                      input:Inputs,
+                      setMessages: setMessages,
+                      setInput: setInput,
+                      setLoading: setLoading
+
+                     }}
+                     />
+
+            
+        <FileButton Purpose={"MicButton"}
+            text={isRecording ? "⏹ Stop" : "🎤 Talk"}
+            ClassNames={"chatSendButton"}
+            attribute={{
+              isRecording: isRecording,
+              setIsRecording: setIsRecording,
+              audioContextRef: audioContextRef,
+              recorderRef: recorderRef,
+              setLoading: setLoading,
+              setLatestAudio: setLatestAudio,
+              setMessages: setMessages
+            }}
+          />
+          <FileButton Purpose={"ClearHistory"}
+            text={"Clear History"}
+            ClassNames={"chatSendButton"}
+            onSuccess={onUploadSuccess}
+            
+          />
+              
         {latestAudio && (
-          <button onClick={playLatestAudio}>▶ Play Last Audio</button>
+          <FileButton Purpose={"AudioMessage"}
+                     text="▶ Play Last Audio"
+                     ClassNames={"chatPlayAudioButton"}/>
         )}
       </div>
     </div>
