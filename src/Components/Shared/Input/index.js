@@ -1,15 +1,17 @@
 import React from "react";
 import "./styles.css";
 
-const Input = ({ name, hint, required, type,onChangeListener }) => {
+const Input = ({ name, StylingClass,value,EnterKey,hint, required, type, onChangeListener }) => {
   return (
     <input
       type={type}
       name={name}
       placeholder={hint}
-      className="primary-input"
+      value={value}
+      className={StylingClass}
       required={required}
       onChange={onChangeListener}
+      onKeyDown={EnterKey}
     />
   );
 };
