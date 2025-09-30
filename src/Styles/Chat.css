@@ -1,20 +1,22 @@
 
-.chat-container {
+
+
+.chatContainer {
   position: fixed;
   top: 0;
   left: 0;
   width: 98%;
   height: 95%;
   padding: 20px;
-  background-color: #f3f3f3; /* off-white */
+  background-color: #f3f3f3; 
   display: flex;
   flex-direction: column;
   font-family: 'Georgia', serif;
   overflow: hidden;
+  z-index: 0;
 }
 
-
-.chat-container::before {
+.chatContainer::before {
   content: "";
   position: absolute;
   top: 0; left: 0; right: 0; bottom: 0;
@@ -28,15 +30,14 @@
       #f3f3f3 0 12.5%,
       #d3d3d3 12.5% 25%
     );
-  opacity: 0.08; /* very subtle */
-  pointer-events: none; /* chat is still clickable */
+  opacity: 0.08;
+  pointer-events: none;
   z-index: 0;
 }
 
-/* Chat window takes available space */
-.chat-window {
+.chatWindow {
   flex: 1;
-  position: relative; /* for overlay z-index stacking */
+  position: relative;
   border: 3px solid #333;
   border-radius: 12px;
   padding: 20px;
@@ -44,10 +45,17 @@
   background-color: rgba(255, 255, 255, 0.95);
   box-shadow: inset 0 0 12px rgba(0,0,0,0.2);
   margin-bottom: 15px;
-  z-index: 1; /* above overlay */
+  z-index: 1;
+}
+.chessImage {
+  width: 250px;        /* or any width you want */
+  height: auto;         /* maintain aspect ratio */
+  cursor: pointer;      /* indicates it’s clickable */
+  border-radius: 8px;   /* optional: rounded corners */
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2); /* optional shadow */
 }
 
-/* Messages */
+
 .message {
   margin: 10px 0;
   padding: 12px 18px;
@@ -60,9 +68,8 @@
   box-shadow: 2px 2px 8px rgba(0,0,0,0.2);
 }
 
-/* User messages */
-.message.user {
-  background: #ffe4c4; /* soft beige */
+.user {
+  background: #ffe4c4;
   color: #333;
   text-align: right;
   float: right;
@@ -70,9 +77,8 @@
   border: 2px solid #d3a87c;
 }
 
-/* AI messages */
-.message.ai {
-  background: #8b8b8b; /* soft gray/black */
+.ai {
+  background: #8b8b8b;
   color: #fff;
   text-align: left;
   float: left;
@@ -80,69 +86,37 @@
   border: 2px solid #5a5a5a;
 }
 
-/* Input bar */
-.input-bar {
+.inputBar {
   display: flex;
   gap: 12px;
   align-items: center;
   z-index: 1;
 }
 
-/* Text input */
-.input-bar input {
+/* --- Scoped generic input and button overrides --- */
+.chatContainer input {
   flex: 1;
-  padding: 14px 18px;
+  padding: 12px 18px;
   border: 2px solid #333;
   border-radius: 30px;
   font-size: 16px;
   outline: none;
   transition: all 0.2s;
+  height: 45px;
+  box-sizing: border-box;
 }
 
-.input-bar input:focus {
+.chatContainer input:focus {
   border-color: #555;
   box-shadow: 0 0 10px rgba(85,85,85,0.5);
 }
 
-/* Send button */
-.input-bar button {
-  padding: 12px 20px;
-  border: none;
-  border-radius: 30px;
-  background-color: #333;
-  color: #fff;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background 0.3s, transform 0.2s;
-}
 
-.input-bar button:hover {
-  background-color: #555;
-  transform: translateY(-2px);
-}
-
-/* Mic button */
-.input-bar .mic-button {
-  background-color: #555;
-  padding: 12px;
-  border-radius: 50%;
-  color: #fff;
-  cursor: pointer;
-  font-size: 18px;
-  transition: all 0.2s;
-}
-
-.input-bar .mic-button:hover {
-  background-color: #777;
-  transform: scale(1.1);
-}
-
-/* Scrollbar styling */
-.chat-window::-webkit-scrollbar {
+.chatWindow::-webkit-scrollbar {
   width: 10px;
 }
 
-.chat-window::-webkit-scrollbar-thumb {
+.chatWindow::-webkit-scrollbar-thumb {
   background: #888;
   border-radius: 5px;
 }
