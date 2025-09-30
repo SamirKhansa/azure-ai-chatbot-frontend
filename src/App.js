@@ -12,8 +12,9 @@ import Chat from "./Pages/Chat";
 // Components
 import Navbar from "./Components/Shared/Navbar";
 
+import DocumentView from "./Pages/DocumentView";
 
-import ProtectedRoutes from "./ProtectedRoutes";
+import ProtectedRoute from "./ProtectedRoutes";
 
 function App() {
   const [user, setUser] = useState(null); // Global user state
@@ -25,15 +26,12 @@ function App() {
         <Route path="/auth" element={<Auth setUser={setUser} />} />
 
         
-        <Route
+       <Route
           path="/dashboard/*"
           element={
             <ProtectedRoute user={user}>
-              <Navbar />
               <Routes>
                 <Route index element={<Dashboard />} />
-
-                
                 <Route
                   path="admin"
                   element={
@@ -42,8 +40,6 @@ function App() {
                     </ProtectedRoute>
                   }
                 />
-
-                {/* User-only route */}
                 <Route
                   path="chat"
                   element={
@@ -52,6 +48,8 @@ function App() {
                     </ProtectedRoute>
                   }
                 />
+                {<Route path="View" element={<DocumentView />} />}
+                
               </Routes>
             </ProtectedRoute>
           }
