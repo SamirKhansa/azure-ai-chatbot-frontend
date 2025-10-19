@@ -142,3 +142,24 @@ button:hover {
   background-color: #555;
   transform: translateY(-1px);
 } */
+
+
+.stopButton {
+  margin-top: 100px;
+  padding: 10px 20px;
+  font-size: 16px;
+}
+
+.chatSendButton {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.chatSendButton:hover {
+  background-color: #0056b3;
+}
