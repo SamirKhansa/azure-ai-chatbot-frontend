@@ -56,11 +56,19 @@ const SignUpForm = ({ toggle }) => {
 
             
             <FileButton
-            attribute={attributes}
-            Purpose={"SignUp"}
-            text={"SignUp"}
-            InsideClass={"primary-button"}
-            OutsideClass={"button-container"}
+              attribute={{
+                email:attributes.email,
+                Fullname: attributes.Fullname,
+                Password: attributes.Password,
+                ConfirmPassowrd: attributes.ConfirmPassowrd,
+                Purpose:"SignUp",
+                text:"SignUp",
+                InsideClass:"primary-button",
+                OutsideClass:"button-container"
+
+              }}
+            
+            
             />
             
             <Switch Text={"Already have an account?"} PageName={"LogIn"} toggle={toggle}/>
