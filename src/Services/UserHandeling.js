@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export const UserDatabase = async ({email}, Purpose) => {
+export const UserDatabase = async ({email, Purpose}) => {
     console.log("this is the email "+{email})
     if (!email) {
         alert("No email provided!");
