@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export const DeleteDocument= async(resource, documentName)=>{
+export const DeleteDocument= async({resource, documentName})=>{
     if (!resource && !documentName) {
         alert("No resource or document name provided for deletion!");
         return;
