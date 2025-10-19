@@ -14,22 +14,28 @@ export const playLatestAudio = async(latestAudio) => {
 
 
 export const sendAudio = async (base64data, audioBlobUrl, setMessages, setLatestAudio, setLoading) => {
-    setMessages(prev => [...prev, { role: "user", text: "🎤 (voice message)" }]);
-    setLatestAudio(audioBlobUrl); 
-    setLoading(true);
+  setMessages(prev => [...prev, { role: "user", text: "🎤 (voice message)" }]);
+  setLatestAudio(audioBlobUrl);
+  setLoading(true);
 
-    try {
-      const response = await sendMessageToBackend(null, base64data);
-      setMessages(prev => [...prev, { role: "ai", text: response }]);
-    } catch (error) {
-      setMessages(prev => [
-        ...prev,
-        { role: "ai", text: "Something went wrong with audio 😅" }
-      ]);
-    } finally {
-      setLoading(false);
-    }
-  };
+  try {
+    // 🟢 Make sure sendMessageToBackend knows this is an audio request
+    const response = await sendMessageToBackend("", base64data); 
+
+    // 🟢 Handle if response is object or contains text field
+    console.log(response)
+    
+    setMessages(prev => [...prev, { role: "ai", text: response.text }]);
+  } catch (error) {
+    console.error("Error sending audio:", error);
+    setMessages(prev => [
+      ...prev,
+      { role: "ai", text: "Something went wrong with audio 😅" }
+    ]);
+  } finally {
+    setLoading(false);
+  }
+};
 
 
 
@@ -37,7 +43,8 @@ export const sendAudio = async (base64data, audioBlobUrl, setMessages, setLatest
 
 
 
-export const toggleRecording = async (isRecording, setIsRecording, audioContextRef, recorderRef, setMessages, setLatestAudio, setLoading) => {
+
+export const toggleRecording = async ({isRecording, setIsRecording, audioContextRef, recorderRef, setMessages, setLatestAudio, setLoading}) => {
     if (isRecording) {
       // Stop recording
       const { blob } = await recorderRef.current.stop();
