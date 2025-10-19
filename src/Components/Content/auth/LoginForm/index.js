@@ -39,12 +39,17 @@ const LoginForm = ({ toggle , setUser}) => {
 
 
       <FileButton
-        Purpose="LogIn"
-        OutsideClass={"button-container"}
-        ClassNames={"primary-button"}
-        text={"Login"}
-        attribute={attributes}
-        setUser={setUser}
+      attribute={{
+        Purpose:"LogIn",
+        OutsideClass: "button-container",
+        ClassNames:"primary-button",
+        text:"Login",
+        email: attributes.email,
+        password: attributes.password,
+        setUser:setUser
+
+      }}
+        
         />
            
 
