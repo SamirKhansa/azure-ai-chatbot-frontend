@@ -30,6 +30,7 @@ const AdminPage = ({ user }) => {
     setResource("");
   };
   const changeUserRole = (email, newRole) => {
+    console.log("NNNNNNNNNNNNNNNNNNNNNN------------------------FFFFFFFFFFFFFFFFFFFFFFFFFFFFLKKKKKKKKKKKKKKKKKKKKK");
     setUsers(prevUsers =>
       prevUsers.map(user =>
         user.email === email ? { ...user, role: newRole } : user
@@ -76,24 +77,36 @@ const AdminPage = ({ user }) => {
                   <td>{u.role}</td>
                   <td>
                     <FileButton 
-                    text="Promote"
-                    Purpose="Promote"
-                    attribute={{ email: u.email}}
-                    ClassNames="promote-btn"
-                    onSuccess={changeUserRole}
+                    attribute={{
+                      text:"Promote",
+                      Purpose:"Promote",
+                      email: u.email,
+                      ClassNames:"promote-btn",
+                      onSuccess: changeUserRole
+                    }}
+                    
+                    
                     />
                     <FileButton 
-                    text="Denote"
-                    Purpose="Denote"
-                    attribute={{ email: u.email }}
-                    ClassNames="demote-btn"
-                    onSuccess={changeUserRole}
+                    attribute={{
+                      text:"Denote",
+                      Purpose:"Denote",
+                      email: u.email,
+                      ClassNames:"demote-btn",
+                      onSuccess:changeUserRole
+
+                    }}
+                    
                     />
                     <FileButton 
-                    text="Delete"
-                    Purpose="Delete"
-                    attribute={{ email: u.email }}
-                    ClassNames="delete-btn"
+                    attribute={{
+                      text:"Delete",
+                      Purpose:"Delete",
+                      email: u.email,
+                      ClassNames:"delete-btn"
+
+                    }}
+                   
                     />
                     
                   </td>
@@ -127,15 +140,19 @@ const AdminPage = ({ user }) => {
           />
 
           <FileButton 
-            Purpose="UploadDocument"
-            text="Upload" 
-            file={selectedFile}
-            type={selectedFile?.type} 
-            resource={resource} 
-            docName={docName}
-            UploadedBy={"Samir Khansa"}
-            onSuccess={onUploadSuccess}
-            ClassNames={"upload-btn"}
+          attribute={{
+              Purpose:"UploadDocument",
+              text: "Upload", 
+              file: selectedFile,
+              type: selectedFile?.type, 
+              resource: resource,
+              docName: docName,
+              UploadedBy: "Samir Khansa",
+              onSuccess: onUploadSuccess,
+              ClassNames: "upload-btn"
+
+            }}
+           
           />
 
           <table className="admin-table">
@@ -157,27 +174,29 @@ const AdminPage = ({ user }) => {
                   <td>{doc.UploadedBy}</td>
                   <td>
                     <FileButton
-                    Purpose={"View"}
-                    ClassNames={"view-btn"}
-                    text={"View"}
                     attribute={{
-                      DocumentName: doc.documents,
-                      Resource: doc.Resource
+                      Purpose: "View",
+                      ClassNames: "view-btn",
+                      text: "View",
+                      name: doc.documents,
+                      resource: doc.Resource
+                  
+
                     }}
+                    
                     />
                     
                     <FileButton 
-                      Purpose="DeleteDocument"
-                      text="Delete" 
-                      file={selectedFile}
-                      type={selectedFile?.type} 
                       attribute={{
+                        Purpose: "DeleteDocument",
+                        text: "Delete", 
+                        file: selectedFile,
+                        type: selectedFile?.type,
                         resource:doc.Resource,
-                        DocumentName: doc.documents
+                        DocumentName: doc.documents,
+                        onSuccess: onDeleteSuccess,
+                        ClassNames: "delete-btn"
                       }}
-                      onSuccess={onDeleteSuccess}
-                      
-                      ClassNames="delete-btn"
                     />
                   </td>
                 </tr>
