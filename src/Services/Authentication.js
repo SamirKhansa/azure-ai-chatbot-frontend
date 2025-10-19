@@ -3,7 +3,7 @@ import axios from "axios";
 
   
 
-export const LogIn= async({email, password}, setUser, navigate)=>{
+export const LogIn= async({email, password, setUser}, navigate)=>{
     console.log(email+" emai then now password "+password)
     if (!email || !password) {
         console.log("No email or password provided!");
