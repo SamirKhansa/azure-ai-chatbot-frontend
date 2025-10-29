@@ -1,12 +1,20 @@
-import { floatTo16BitPCM, arrayBufferToBase64, base64ToArrayBuffer, createWavHeader, combineWav } from '../../Utils/AudioHelperFunctions'
+import { 
+  floatTo16BitPCM, 
+  arrayBufferToBase64, 
+  base64ToArrayBuffer, 
+  createWavHeader, 
+  combineWav 
+} from '../../Utils/AudioHelperFunctions'
 
 let nextStartTime = 0;
+let activeSources = [];  // Track currently playing AI audio
+let isUserSpeaking = false;
 
-
-export const startWebSocket = ({wsRef, playAudio, setMessages}) => {
+// ======================= WebSocket Setup =======================
+export const startWebSocket = ({ wsRef, playAudio, setMessages }) => {
   if (wsRef.current) return;
-  console.log("11111111111111111111111111111111111111111111111111111111111");
 
+  console.log("🌐 Connecting to backend realtime WebSocket...");
   const ws = new WebSocket("ws://127.0.0.1:8000/realtime");
 
   ws.onopen = () => console.log("🎤 Frontend connected to Realtime");
@@ -15,23 +23,22 @@ export const startWebSocket = ({wsRef, playAudio, setMessages}) => {
 
   ws.onmessage = (event) => {
     const msg = JSON.parse(event.data);
-    console.log("Received an audio for realtime from the backend:", msg);
-    if (msg.type === "audio.delta") {
-    //   console.log("Audio delta (base64) length:", msg.data.length);
-    //   console.log("First 50 chars:", msg.data.slice(0, 50));
-      playAudio(msg.data);
-    }
 
-    // if (msg.type === "audio.delta") playAudio(msg.data);
+    if (msg.type === "audio.delta") {
+      playAudio(msg.data); // Play AI audio
+    } 
     else if (msg.type === "transcript") {
       setMessages(prev => [...prev, { role: "ai", text: msg.text }]);
+    } 
+    else if (msg.type === "stop_audio") {
+      stopAllAIAudio(wsRef);
     }
   };
 
   wsRef.current = ws;
 };
 
-
+// ======================= Microphone + Speech Detection =======================
 export const startRecording = async ({ audioContextRef, recorderRef, wsRef, setIsRecording, setShowMicOverlay }) => {
   try {
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -43,11 +50,14 @@ export const startRecording = async ({ audioContextRef, recorderRef, wsRef, setI
     const source = audioContext.createMediaStreamSource(stream);
     const processor = audioContext.createScriptProcessor(4096, 1, 1);
 
+    // 🎙️ Monitor mic input for interruptions
+    monitorMicInput(audioContext, source, wsRef);
+
     source.connect(processor);
     processor.connect(audioContext.destination);
 
     processor.onaudioprocess = (e) => {
-      const inputData = e.inputBuffer.getChannelData(0); // mono
+      const inputData = e.inputBuffer.getChannelData(0);
       const buffer = floatTo16BitPCM(inputData);
       const base64Audio = arrayBufferToBase64(buffer);
 
@@ -62,26 +72,25 @@ export const startRecording = async ({ audioContextRef, recorderRef, wsRef, setI
     recorderRef.current = processor;
 
   } catch (err) {
-    console.error("Error accessing microphone:", err);
+    console.error("❌ Error accessing microphone:", err);
     setIsRecording(false);
     setShowMicOverlay(false);
   }
-
 };
 
-export const stopRecording = ({recorderRef, wsRef}) => {
+export const stopRecording = ({ recorderRef, wsRef }) => {
   if (recorderRef.current) {
     recorderRef.current.disconnect();
     recorderRef.current = null;
   }
 
-  
   if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
     wsRef.current.send(JSON.stringify({ type: "input_audio_buffer.commit" }));
   }
 };
 
-export const playAudio =async  (base64PCM,audioContextRef, speed = 1) => { 
+// ======================= AI Audio Playback =======================
+export const playAudio = async (base64PCM, audioContextRef, speed = 1) => { 
   const audioContext = audioContextRef.current;
   if (!audioContext) return;
 
@@ -99,9 +108,55 @@ export const playAudio =async  (base64PCM,audioContextRef, speed = 1) => {
   const startTime = Math.max(nextStartTime, now + 0.05);
   source.start(startTime);
 
+  // Track for interruption
+  activeSources.push(source);
+  source.onended = () => {
+    activeSources = activeSources.filter((s) => s !== source);
+  };
+
   nextStartTime = startTime + audioBuffer.duration / speed;
 };
 
+// ======================= Stop All AI Audio =======================
+function stopAllAIAudio(wsRef) {
+  console.log("🛑 User started speaking — stopping AI playback...");
 
+  // Stop local AI audio
+  activeSources.forEach((src) => {
+    try { src.stop(); } catch (e) {}
+  });
+  activeSources = [];
+  nextStartTime = 0;
 
+  // Tell backend to cancel model response
+  if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
+    wsRef.current.send(JSON.stringify({ type: "stop" }));
+  }
+}
 
+// ======================= Detect User Speech =======================
+function monitorMicInput(audioContext, sourceNode, wsRef) {
+  const analyser = audioContext.createAnalyser();
+  analyser.fftSize = 512;
+  const dataArray = new Uint8Array(analyser.frequencyBinCount);
+  sourceNode.connect(analyser);
+
+  function detectSpeech() {
+    analyser.getByteFrequencyData(dataArray);
+    const avgVolume = dataArray.reduce((a, b) => a + b, 0) / dataArray.length;
+
+    // 🎯 Adjust threshold based on mic sensitivity
+    if (avgVolume > 25 && !isUserSpeaking) {
+      isUserSpeaking = true;
+      stopAllAIAudio(wsRef);
+    }
+
+    if (avgVolume < 10) {
+      isUserSpeaking = false;
+    }
+
+    requestAnimationFrame(detectSpeech);
+  }
+
+  detectSpeech();
+}
