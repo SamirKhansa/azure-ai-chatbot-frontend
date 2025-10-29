@@ -90,4 +90,3 @@ export function combineWav(header, pcmArrayBuffer) {
   tmp.set(new Uint8Array(pcmArrayBuffer), header.byteLength);
   return tmp.buffer;
 }
-
