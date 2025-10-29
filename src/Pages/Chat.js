@@ -24,6 +24,7 @@ const Chat = () => {
   const [showMicOverlay, setShowMicOverlay] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
   const [latestAudio, setLatestAudio] = useState(null);
+  
   const wsRef = useRef(null);
   const onUploadSuccess = () => {
     setMessages([])
